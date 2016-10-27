@@ -5,6 +5,31 @@
 	<body>
 		<button id="speak">Говорить</button>
 		<script type="text/javascript">
+			function getPhrases()
+			{
+				return [
+					[
+						'Гляжу в твоё будущее и вижу там.',
+						'Ворожу-ворожу, будущее знать хочу.',
+						'Вся твоя судьба как на ладони у меня.',
+						'Доверься мне и расскажу всё про твою судьбу без утайки.',
+					],
+					[
+						'Дальняя дорога выпадет тебе.',
+						'Много багов пофиксить придётся, много тикетов закрыть.',
+					],
+					[
+						'А затем',
+						'Хотя нет',
+						'А перед этим',
+					],
+					[
+						'Трудный релиз предстоит.',
+						'Будет великое множество пользователей благодарных.',
+					],
+				]
+			}
+
 			var random_sequences = []
 			var counter = 0;
 
@@ -28,7 +53,7 @@
 			  	return array;
 			}
 
-			function generateRandomSequences()
+			function initRandom()
 			{
 				var phrases = getPhrases();
 				for (var i = 0; i < phrases.length; ++i)
@@ -57,38 +82,21 @@
 				console.log(random_sequences);
 			}
 
-			function getRandomPhrase(chunk_idx)
+			function getRandomPhrases()
 			{
 				var phrases = getPhrases();
-				var randox_idx = random_sequences[chunk_idx][counter];
-				var res = phrases[chunk_idx][randox_idx];
-				console.log("chunk_idx: " + chunk_idx + " res: " + res);
-				return res;
-			}
+				var res = [];
 
-			function getPhrases()
-			{
-				return [
-					[
-						'Гляжу в твоё будущее и вижу там.',
-						'Ворожу-ворожу, будущее знать хочу.',
-						'Вся твоя судьба как на ладони у меня.',
-						'Доверься мне и расскажу всё про твою судьбу без утайки.',
-					],
-					[
-						'Дальняя дорога выпадет тебе.',
-						'Много багов пофиксить придётся, много тикетов закрыть.',
-					],
-					[
-						'А затем',
-						'Хотя нет',
-						'А перед этим',
-					],
-					[
-						'Трудный релиз предстоит.',
-						'Будет великое множество пользователей благодарных.',
-					],
-				]
+				for (var chunk_idx = 0; chunk_idx < phrases.length; ++chunk_idx)
+				{
+					var randox_idx = random_sequences[chunk_idx][counter];
+					var random_phrase = phrases[chunk_idx][randox_idx];
+					res[chunk_idx] = random_phrase;
+				}
+				counter++;
+
+				console.log(res);
+				return res;
 			}
 
 			function speakPhrase(phrase)
@@ -103,19 +111,18 @@
 
 			function speak()
 			{
-				var phrases = getPhrases();
+				var phrases = getRandomPhrases();
 				for (var i = 0; i < phrases.length; ++i)
 				{
-					speakPhrase(getRandomPhrase(i));
+					speakPhrase(phrases[i]);
 				}
-				counter++;
    			}
 
    			document.getElementById("speak").addEventListener("click", function(e){
    				speak();
    			})
 
-   			generateRandomSequences();
+			initRandom();
 		</script>
 	</body>
 </html>
