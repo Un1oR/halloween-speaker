@@ -1,0 +1,121 @@
+<html>
+	<head>
+		<title>Моя страница</title>
+	</head>
+	<body>
+		<button id="speak">Говорить</button>
+		<script type="text/javascript">
+			var random_sequences = []
+			var counter = 0;
+
+			// http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+			function shuffle(array) {
+				var currentIndex = array.length, temporaryValue, randomIndex;
+
+			  	// While there remain elements to shuffle...
+			  	while (0 !== currentIndex) {
+
+			    	// Pick a remaining element...
+			    	randomIndex = Math.floor(Math.random() * currentIndex);
+			    	currentIndex -= 1;
+
+			    	// And swap it with the current element.
+			    	temporaryValue = array[currentIndex];
+			    	array[currentIndex] = array[randomIndex];
+			    	array[randomIndex] = temporaryValue;
+			  	}
+
+			  	return array;
+			}
+
+			function generateRandomSequences()
+			{
+				var phrases = getPhrases();
+				for (var i = 0; i < phrases.length; ++i)
+				{
+					var len = phrases[i].length;
+					var pattern = []
+					for (var j = 0; j < len; ++j)
+					{
+						pattern.push(j);
+					}
+
+					random_sequences[i] = shuffle(pattern);
+					for (var j = 0; j < 1000; ++j)
+					{
+						var last_idx = random_sequences[i].length - 1;
+						do {
+							var chunk = shuffle(pattern);
+							if (random_sequences[i][last_idx] != chunk[0])
+							{
+								random_sequences[i] = random_sequences[i].concat(chunk);
+								break;
+							}
+						} while(true);
+					}
+				}
+				console.log(random_sequences);
+			}
+
+			function getRandomPhrase(chunk_idx)
+			{
+				var phrases = getPhrases();
+				var randox_idx = random_sequences[chunk_idx][counter];
+				var res = phrases[chunk_idx][randox_idx];
+				console.log("chunk_idx: " + chunk_idx + " res: " + res);
+				return res;
+			}
+
+			function getPhrases()
+			{
+				return [
+					[
+						'Гляжу в твоё будущее и вижу там.',
+						'Ворожу-ворожу, будущее знать хочу.',
+						'Вся твоя судьба как на ладони у меня.',
+						'Доверься мне и расскажу всё про твою судьбу без утайки.',
+					],
+					[
+						'Дальняя дорога выпадет тебе.',
+						'Много багов пофиксить придётся, много тикетов закрыть.',
+					],
+					[
+						'А затем',
+						'Хотя нет',
+						'А перед этим',
+					],
+					[
+						'Трудный релиз предстоит.',
+						'Будет великое множество пользователей благодарных.',
+					],
+				]
+			}
+
+			function speakPhrase(phrase)
+			{
+				var utterance = new SpeechSynthesisUtterance(phrase);
+				utterance.lang = 'ru-RU'
+				utterance.pitch = 0.1
+				utterance.rate = 0.8
+
+   				speechSynthesis.speak(utterance);
+			}
+
+			function speak()
+			{
+				var phrases = getPhrases();
+				for (var i = 0; i < phrases.length; ++i)
+				{
+					speakPhrase(getRandomPhrase(i));
+				}
+				counter++;
+   			}
+
+   			document.getElementById("speak").addEventListener("click", function(e){
+   				speak();
+   			})
+
+   			generateRandomSequences();
+		</script>
+	</body>
+</html>
