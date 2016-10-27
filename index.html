@@ -10,7 +10,7 @@
 				return [
 					[
 						'Гляжу в твоё будущее и вижу там.',
-						'Ворожу-ворожу, будущее знать хочу.',
+						'Ворожуу - ворожуу, будущее знать хочу.',
 						'Вся твоя судьба как на ладони у меня.',
 						'Доверься мне и расскажу всё про твою судьбу без утайки.',
 					],
@@ -99,23 +99,25 @@
 				return res;
 			}
 
-			function speakPhrase(phrase)
+			function speakPhrase(phrase, callback)
 			{
 				var utterance = new SpeechSynthesisUtterance(phrase);
 				utterance.lang = 'ru-RU'
 				utterance.pitch = 0.1
 				utterance.rate = 0.8
+				utterance.onend = callback
 
    				speechSynthesis.speak(utterance);
 			}
 
-			function speak()
+			function speak(phrase, callback)
 			{
-				var phrases = getRandomPhrases();
-				for (var i = 0; i < phrases.length; ++i)
-				{
-					speakPhrase(phrases[i]);
-				}
+				var phrases = phrase || getRandomPhrases().join(' ');
+				speakPhrase(phrases, callback);
+				// for (var i = 0; i < phrases.length; ++i)
+				// {
+				// 	speakPhrase(phrases[i]);
+				// }
    			}
 
    			document.getElementById("speak").addEventListener("click", function(e){
@@ -124,5 +126,6 @@
 
 			initRandom();
 		</script>
+		<script src='app.js'></script>
 	</body>
 </html>
