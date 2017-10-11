@@ -39,23 +39,10 @@ recognition.onstart = function() {
 };
 recognition.onresult = function(event) {
 
-	var string;
 	for (var i = 0; i < event.results.length; i++) {
 		var result = event.results[i];
 		console.log('##', result.isFinal, result[0].transcript);
-		
-		if (waiting) {
-			clearTimeout(lastEventTimeout);
-		} else if (!result.isFinal) {
-			waiting = true;
-		}
-	}
 
-	lastEventTimeout = setTimeout(function() {
-		waiting = false;
-
-		recognition.stop();
-		console.log('## result.isFinal', result.isFinal);
 		if (result.isFinal) {
 			var transcript = result[0].transcript;
 			if (transcript.indexOf('да') !== -1 ||
@@ -69,11 +56,10 @@ recognition.onresult = function(event) {
 					recognition.start();
 				});
 
+				// запасное начало распознавания, если callback utterance.onend не сработал
 				setTimeout(function() {
-					try {
+					if (!recognizing) {
 						recognition.start();
-					} catch(e) {
-						console.log('e', typeof e, e);
 					}
 				}, 10000)
 
@@ -85,10 +71,31 @@ recognition.onresult = function(event) {
 
 				return;
 			} else {
-				recognition.start();
+				if (!recognizing) {
+					recognition.start();
+				}
+				return;
 			}
 		}
-	}, 500)
+		
+		if (waiting) {
+			clearTimeout(lastEventTimeout);
+		} else if (!result.isFinal) {
+			waiting = true;
+		}
+	}
+
+	if (!result.isFinal) {
+		lastEventTimeout = setTimeout(function() {
+			waiting = false;
+
+			recognition.stop();
+			console.log('## result.isFinal', result.isFinal);
+			if (result.isFinal) {
+				
+			}
+		}, 500)
+	}
 };
 recognition.onerror = function(error) {
 	console.error(error);
